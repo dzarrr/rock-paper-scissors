@@ -5,6 +5,25 @@
     <meta charset="UTF-8"/>
   </head>
   <body>
+    <div class="container">
+      <div class="selection">
+        <div>
+          <button id="selection__rock" value="rock">Rock</button>
+        </div>
+        <div>
+          <button id="selection__paper" value="paper">Paper</button>
+        </div>
+        <div>
+          <button id="selection__scissors" value="scissors">Scissors</button>
+        </div>
+      </div>
+      <div class="result">
+      </div>
+      <div class="score">
+        <div id="score__player">0</div>
+        <div id="score__computer">0</div>
+      </div>
+    </div>
     <script>
       let possibleChoice = [
         'rock',
@@ -17,28 +36,35 @@
         computer: 0
       }
 
-      function game(n = 5) {
-        for (let i = 0; i < n; i ++) {
-          let playerSelection = prompt('Rock, paper or scissors?');
-          let computerSelection = possibleChoice[parseInt(Math.floor(Math.random() * possibleChoice.length))]
-          if (validate(playerSelection)) {
-            console.log(playRound(playerSelection, computerSelection));
-          } else {
-            alert('Invalid input, please choose between rock, paper, or scissors!');
-          }
-        }
+      let buttons = document.querySelectorAll('button');
+      buttons.forEach(function(button) {
+        button.addEventListener('click', buttonClickHandler);
+      });
 
-        if (score.player > score.computer) {
-          alert(`Congratulations! You win.\n Final score: player ${score.player}, computer ${score.computer}`);
-        } else if (score.player < score.computer) {
-          alert(`You lose.\n Final score: player ${score.player}, computer ${score.computer}`);
-        } else {
-          alert(`Draw\n Final score: player ${score.player}, computer ${score.computer}`);
-        }
+      function buttonClickHandler(e) {  
+        let computerSelection = possibleChoice[parseInt(Math.floor(Math.random() * possibleChoice.length))]
+        let playerSelection = e.target.value;
+        let result = document.querySelector('.result');
+        result.innerHTML = playRound(playerSelection, computerSelection);
       }
 
       function updateScore(name){
         score[name] += 1;
+        let winnerScore = document.querySelector(`#score__${name}`);
+        winnerScore.innerText = score[name];
+        if (score[name] == 5 ) announceWinner(name);
+      }
+
+      function announceWinner(name) {
+        disableAllButton();
+        alert(`Congrats, ${name}. You've won the game!`);
+      }
+
+      function disableAllButton() {
+        let buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+          button.disabled = true;
+        })
       }
 
       function playRound(playerSelection, computerSelection) {
@@ -65,11 +91,6 @@
         }
       }
 
-      function validate(playerSelection) {
-        return possibleChoice.includes(playerSelection.toLowerCase());
-      }
-
-      game();
     </script>
   </body>
 </html>
